@@ -15,7 +15,7 @@ Corresponde a la entrega de la EXP1, Semana 2.
 ## Información Adicional
 
 - [Repositorio GitHub](https://github.com/ecodisonante/DUOC-FLIX)
-- [Tablero Trello](https://trello.com/invite/b/Rf79QjYd/ATTI1a97b75eb22f09f0744699b607d6f2b1A48F3477/desarrollo-fullstack-i002a)
+- [Tablero Trello](https://trello.com/b/Rf79QjYd/desarrollo-fullstack-i002a)
 
 
 @author _Francisco Valdés_
