@@ -1,13 +1,13 @@
-package com.fullstack1.peliculas;
+package com.fullstack.duocflix;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PeliculasApplication {
+public class MoviesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PeliculasApplication.class, args);
+		SpringApplication.run(MoviesApplication.class, args);
 	}
 
 }
