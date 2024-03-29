@@ -1,4 +1,4 @@
-package com.fullstack1.peliculas;
+package com.fullstack.duocflix;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
