@@ -21,3 +21,31 @@ INSERT INTO MOVIE (title, year, director, genre, synopsis) VALUES('Ghost in the 
 INSERT INTO MOVIE (title, year, director, genre, synopsis) VALUES('Los niños lobo', 2001, 'Mamoru Hosoda', 'Animación. Drama. Fantástico', 'Cuando era poco más que una adolescente, Hana se enamoró de un Hombre Lobo. Puede parecer extraño, pero durante años fueron inmensamente felices, y tuvieron dos hijos: Yuki y Ame, que nacieron también con la capacidad de convertirse en lobos. Tras la repentina muerte de su compañero, Hana decide mudarse al campo para así criar a sus hijos en un entorno tranquilo, donde sus extraordinarias facultades no sean descubiertas. Sin embargo, al crecer, Yuki y Ame deberán decidir si quieren vivir como humanos o como lobos.');
 INSERT INTO MOVIE (title, year, director, genre, synopsis) VALUES('Paprika, detective de los sueños', 2006, 'Satoshi Kon', 'Animación. Ciencia ficción. Fantástico. Intriga', 'La psiquiatra Atsuko Chiba ha desarrollado un método de terapia revolucionario denominado "PT", un prototipo de máquina experimental gracias a la cual es posible introducirse en la mente de los pacientes para tratar sus ansiedades. Pero uno de los modelos de PT es robado del laboratorio de la Dra. Atsuko, y comienzan a utilizarlo para invadir las mentes de sus creadores, destruyendo sus personalidades mientras duermen.');
 
+
+CREATE TABLE genre (
+    genre_id NUMBER(3) PRIMARY KEY, 
+    genre_name VARCHAR2(50 CHAR)
+)
+
+-- ALTER TABLE genre ADD CONSTRAINT genre_pk PRIMARY KEY ( genre_id );
+
+INSERT INTO GENRE (genre_id, genre_name) VALUES (1, 'Animación')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (2, 'Fantástico')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (3, 'Aventuras')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (4, 'Drama')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (5, 'Bélico')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (6, 'Ciencia Ficción')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (7, 'Acción')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (8, 'Thriller')
+INSERT INTO GENRE (genre_id, genre_name) VALUES (9, 'Intriga')
+
+
+
+
+
+
+
+
+
+
+
