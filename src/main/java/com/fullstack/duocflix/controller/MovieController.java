@@ -11,10 +11,15 @@ import com.fullstack.duocflix.service.IMovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/movies")
@@ -48,5 +53,24 @@ public class MovieController {
 
         return ResponseEntity.ok(movie.get());
     }
+
+    
+    @PostMapping
+    public Movie createMovie(@RequestBody Movie movie) {
+        return _service.createMovie(movie);
+    }
+
+    @PutMapping("/{id}")
+    public Movie putMethodName(@PathVariable Long id, @RequestBody Movie movie) {
+        return _service.updateMovie(id, movie);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteMovie(@PathVariable Long id){
+        _service.deleteMovie(id);
+        return ResponseEntity.ok(new ExceptionResponse(HttpStatus.OK.value(), "Película eliminada."));
+    }
+
+
 
 }
