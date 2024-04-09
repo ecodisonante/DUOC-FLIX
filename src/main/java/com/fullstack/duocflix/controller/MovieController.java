@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
@@ -54,23 +53,20 @@ public class MovieController {
         return ResponseEntity.ok(movie.get());
     }
 
-    
     @PostMapping
-    public Movie createMovie(@RequestBody Movie movie) {
-        return _service.createMovie(movie);
+    public ResponseEntity<Object> createMovie(@RequestBody Movie movie) {
+        return ResponseEntity.ok(_service.createMovie(movie));
     }
 
     @PutMapping("/{id}")
-    public Movie putMethodName(@PathVariable Long id, @RequestBody Movie movie) {
-        return _service.updateMovie(id, movie);
+    public ResponseEntity<Object> putMethodName(@PathVariable Long id, @RequestBody Movie movie) {
+        return ResponseEntity.ok(_service.updateMovie(id, movie));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteMovie(@PathVariable Long id){
+    public ResponseEntity<Object> deleteMovie(@PathVariable Long id) {
         _service.deleteMovie(id);
         return ResponseEntity.ok(new ExceptionResponse(HttpStatus.OK.value(), "Película eliminada."));
     }
-
-
 
 }
