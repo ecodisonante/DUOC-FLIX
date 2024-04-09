@@ -2,19 +2,22 @@
 
 Este proyecto es parte de la asignatura **DESARROLLO FULLSTACK I_002A**
 
-## Versión Actual - 2.0
-Corresponde a la entrega de la EXP2, Semana 4
+## Versión Actual - 2.1
+Corresponde a la entrega de la EXP2, Semana 5
 
 ## Cambios
-- Se reemplaza la coleccion de datos de prueba por una conexion a Oracle Cluod
-- Se separan los componentes en carpetas siguiendo la estructura estandar de un proyecto spring boot
-- Se crea un modelo DTO para la devolucion de datos en listas
-- Manejo de exepciones para rutas y datos erroneos
+- Se agrega CRUD en MovieService
+- Se agrega CRUD en MovieController
+- Capturar excepciones cuando el objeto Movie no es ingresado correctamente en metodos POST y PUT
+
 
 ## Rutas Disponibles
 
-1. Listado de películas disponibles `/movies`
-2. Información detallada de una pelicula por su ID `/movies/id`
+1. Listado de películas disponibles `GET: /movies`
+2. Información detallada de una pelicula por su ID `GET: /movies/id`
+3. Agregar película `POST: /movies` 
+4. Actualizar película `PUT: /movies/id` 
+5. Eliminar película `DELETE: /movies/id` 
 
 
 ## Información Adicional
