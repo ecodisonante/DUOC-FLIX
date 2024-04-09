@@ -10,4 +10,10 @@ public interface IMovieService {
 
     Optional<Movie> getMovieById(Long id);
 
+    Movie createMovie(Movie movie);
+
+    Movie updateMovie(Long id, Movie movie);
+
+    void deleteMovie(Long id);
+
 }
