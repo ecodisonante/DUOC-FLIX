@@ -7,11 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "movie")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
 
     @Id
@@ -29,5 +33,6 @@ public class Movie {
     @Lob
     @Column(name = "synopsis")
     private String synopsis;
+
 
 }
