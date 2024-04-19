@@ -34,5 +34,8 @@ public class Movie {
     @Column(name = "synopsis")
     private String synopsis;
 
+    public MovieDto toDto() {
+        return new MovieDto(id, title, year);
+    }
 
 }

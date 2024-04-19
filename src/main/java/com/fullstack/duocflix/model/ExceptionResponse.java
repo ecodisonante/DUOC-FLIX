@@ -1,4 +1,4 @@
-package com.fullstack.duocflix.dto;
+package com.fullstack.duocflix.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ExceptionResponse {
-    private int code;
-    private String message;
+
+    int code;
+    String message;
+
 }
