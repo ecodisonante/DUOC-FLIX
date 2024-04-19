@@ -28,12 +28,10 @@ class MovieServiceTest {
     @Mock
     private MovieRepository repository;
 
-    private List<Movie> movies;
-
     @Test
     void testGetAllMovies() {
         // given
-        movies = List.of(
+        var movies = List.of(
                 new Movie(1, "title1", 2024, "director1", "genre1", "synopsis1"),
                 new Movie(2, "title2", 2024, "director2", "genre2", "synopsis2"),
                 new Movie(3, "title3", 2024, "director3", "genre3", "synopsis3"));
