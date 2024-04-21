@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fullstack.duocflix.dto.ExceptionResponse;
+import com.fullstack.duocflix.model.ExceptionResponse;
 
 @ControllerAdvice
 public class ExceptionController {

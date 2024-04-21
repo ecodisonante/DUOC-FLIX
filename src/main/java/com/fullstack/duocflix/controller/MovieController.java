@@ -3,9 +3,8 @@ package com.fullstack.duocflix.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.fullstack.duocflix.dto.ExceptionResponse;
+import com.fullstack.duocflix.model.ExceptionResponse;
 import com.fullstack.duocflix.model.Movie;
-import com.fullstack.duocflix.service.DtoService;
 import com.fullstack.duocflix.service.IMovieService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +24,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MovieController {
 
     @Autowired
-    IMovieService _service;
-    @Autowired
-    DtoService _dto;
+    IMovieService service;
 
     @GetMapping
     public ResponseEntity<Object> getMovieList() {
         try {
-            List<Movie> movies = _service.getAllMovies();
+            List<Movie> movies = service.getAllMovies();
 
             if (movies.isEmpty())
                 return ResponseEntity.ok(new ExceptionResponse(
                         HttpStatus.OK.value(), "Lo sentimos, no hay peliculas disponibles"));
 
-            return ResponseEntity.ok(movies.stream()
-                    .map(movie -> _dto.toMovieDto(movie))
-                    .toList());
+            return ResponseEntity.ok(movies.stream().map(Movie::toDto).toList());
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ExceptionResponse(
+            return ResponseEntity.internalServerError().body(new ExceptionResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
@@ -51,7 +46,7 @@ public class MovieController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getMovie(@PathVariable Long id) {
         try {
-            Optional<Movie> movie = _service.getMovieById(id);
+            Optional<Movie> movie = service.getMovieById(id);
 
             if (!movie.isPresent())
                 return ResponseEntity.badRequest().body(new ExceptionResponse(
@@ -60,7 +55,7 @@ public class MovieController {
             return ResponseEntity.ok(movie.get());
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ExceptionResponse(
+            return ResponseEntity.internalServerError().body(new ExceptionResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
@@ -68,28 +63,28 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<Object> createMovie(@RequestBody Movie movie) {
         try {
-            return ResponseEntity.ok(_service.createMovie(movie));
+            return ResponseEntity.ok(service.createMovie(movie));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+                    HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> putMethodName(@PathVariable Long id, @RequestBody Movie movie) {
+    public ResponseEntity<Object> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
         try {
-            return ResponseEntity.ok(_service.updateMovie(id, movie));
+            return ResponseEntity.ok(service.updateMovie(id, movie));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+                    HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteMovie(@PathVariable Long id) {
         try {
-            if (_service.deleteMovie(id)) {
+            if (service.deleteMovie(id)) {
                 return ResponseEntity.ok(new ExceptionResponse(HttpStatus.OK.value(), "Película eliminada."));
             } else {
                 return ResponseEntity.badRequest().body(new ExceptionResponse(
@@ -97,7 +92,7 @@ public class MovieController {
             }
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ExceptionResponse(
+            return ResponseEntity.internalServerError().body(new ExceptionResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
