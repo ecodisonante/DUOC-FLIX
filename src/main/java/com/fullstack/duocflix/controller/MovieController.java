@@ -2,12 +2,18 @@ package com.fullstack.duocflix.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.fullstack.duocflix.model.ExceptionResponse;
 import com.fullstack.duocflix.model.Movie;
+import com.fullstack.duocflix.model.MovieDto;
+import com.fullstack.duocflix.model.MovieException;
 import com.fullstack.duocflix.service.IMovieService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,73 +33,68 @@ public class MovieController {
     IMovieService service;
 
     @GetMapping
-    public ResponseEntity<Object> getMovieList() {
-        try {
-            List<Movie> movies = service.getAllMovies();
+    public CollectionModel<EntityModel<MovieDto>> getMovieList() {
+        List<Movie> movies = service.getAllMovies();
 
-            if (movies.isEmpty())
-                return ResponseEntity.ok(new ExceptionResponse(
-                        HttpStatus.OK.value(), "Lo sentimos, no hay peliculas disponibles"));
+        var moviesResouce = movies.stream()
+                .map(Movie::toDto)
+                .map(movie -> EntityModel.of(movie,
+                        WebMvcLinkBuilder
+                                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovie(movie.getId()))
+                                .withSelfRel()))
+                .collect(Collectors.toList());
 
-            return ResponseEntity.ok(movies.stream().map(Movie::toDto).toList());
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ExceptionResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
-        }
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovieList());
+        return CollectionModel.of(moviesResouce, linkTo.withRel("movies"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getMovie(@PathVariable Long id) {
-        try {
-            Optional<Movie> movie = service.getMovieById(id);
+    public EntityModel<Movie> getMovie(@PathVariable Long id) {
+        Optional<Movie> movie = service.getMovieById(id);
 
-            if (!movie.isPresent())
-                return ResponseEntity.badRequest().body(new ExceptionResponse(
-                        HttpStatus.BAD_REQUEST.value(), "No existe la pelicula con el id " + id));
+        if (movie.isPresent())
+            return EntityModel.of(movie.get(),
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovie(id)).withSelfRel(),
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovieList())
+                            .withRel("all-movies"));
 
-            return ResponseEntity.ok(movie.get());
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ExceptionResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
-        }
+        else
+            throw new MovieException("No existe la pelicula con el id " + id);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createMovie(@RequestBody Movie movie) {
+    public EntityModel<Movie> createMovie(@RequestBody Movie movie) {
         try {
-            return ResponseEntity.ok(service.createMovie(movie));
+            var newMovie = service.createMovie(movie);
+            return EntityModel.of(newMovie,
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass())
+                            .getMovie(newMovie.getId())).withSelfRel(),
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass())
+                            .getMovieList()).withRel("all-movies"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ExceptionResponse(
-                    HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+            throw new MovieException("Error al crear pelicula: " + e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
+    public EntityModel<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
         try {
-            return ResponseEntity.ok(service.updateMovie(id, movie));
-
+            var updatedMovie = service.updateMovie(id, movie);
+            return EntityModel.of(updatedMovie,
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovie(id)).withSelfRel(),
+                    WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovieList())
+                            .withRel("all-movies"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ExceptionResponse(
-                    HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+            throw new MovieException("Error al actualizar pelicula: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteMovie(@PathVariable Long id) {
-        try {
-            if (service.deleteMovie(id)) {
-                return ResponseEntity.ok(new ExceptionResponse(HttpStatus.OK.value(), "Película eliminada."));
-            } else {
-                return ResponseEntity.badRequest().body(new ExceptionResponse(
-                        HttpStatus.BAD_REQUEST.value(), "No existe la pelicula con el id " + id));
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ExceptionResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        if (service.deleteMovie(id)) {
+            return ResponseEntity.ok(new ExceptionResponse(HttpStatus.OK.value(), "Película eliminada."));
+        } else {
+            throw new MovieException("No existe la pelicula con el id " + id);
         }
     }
 
