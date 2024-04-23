@@ -1,7 +1,9 @@
 package com.fullstack.duocflix.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import com.fullstack.duocflix.model.Movie;
+import com.fullstack.duocflix.model.MovieException;
 import com.fullstack.duocflix.service.MovieService;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +32,14 @@ class MovieControllerTest {
     @Mock
     private MovieService service;
 
+    private Movie movie;
+
+    @BeforeEach
+    void setup() {
+        // given
+        movie = new Movie(1, "title1", 2024, "director1", "genre1", "synopsis1");
+    }
+
     @Test
     void testGetMovieList() {
         // given
@@ -36,97 +48,76 @@ class MovieControllerTest {
                 new Movie(2, "title2", 2024, "director2", "genre2", "synopsis2"),
                 new Movie(3, "title3", 2024, "director3", "genre3", "synopsis3"));
 
+        // when
         when(service.getAllMovies()).thenReturn(movies);
+        var result = controller.getMovieList();
 
         // test OK
-        var result = controller.getMovieList();
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getContent());
+        assertEquals(movies.size(), result.getContent().size());
 
         // Test Empty
         when(service.getAllMovies()).thenReturn(new ArrayList<Movie>());
         result = controller.getMovieList();
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-
-        // Test Catch
-        when(service.getAllMovies()).thenThrow(new RuntimeException("Exception"));
-        result = controller.getMovieList();
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertTrue(result.getContent().isEmpty());
     }
 
     @Test
     void testGetMovie() {
-        // given
-        var movie = new Movie(1, "title1", 2024, "director1", "genre1", "synopsis1");
+        // when
         when(service.getMovieById(1L)).thenReturn(Optional.of(movie));
+        var result = controller.getMovie(1L);
 
         // test OK
-        var result = controller.getMovie(1L);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(Movie.class, result.getBody().getClass());
+        assertNotNull(result.getContent());
+        assertEquals(Movie.class, result.getContent().getClass());
 
-        // Test Empty
-        result = controller.getMovie(500L);
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-
-        // Test Catch
-        when(service.getMovieById(anyLong())).thenThrow(new RuntimeException("Exception"));
-        result = controller.getMovie(1L);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        // test Error
+        assertThrows(MovieException.class, () -> controller.getMovie(100L));
     }
 
     @Test
     void testCreateMovie() throws Exception {
-        // given
-        var movie = new Movie(1, "title1", 2024, "director1", "genre1", "synopsis1");
+        // when
+        when(service.createMovie(new Movie())).thenThrow(new MovieException("Exception"));
         when(service.createMovie(movie)).thenReturn(movie);
+        var result = controller.createMovie(movie);
 
         // test OK
-        var result = controller.createMovie(movie);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(Movie.class, result.getBody().getClass());
+        assertNotNull(result.getContent());
+        assertEquals(Movie.class, result.getContent().getClass());
 
-        // Test Catch
-        when(service.createMovie(any())).thenThrow(new RuntimeException("Exception"));
-        result = controller.createMovie(movie);
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        // test Error
+        assertThrows(MovieException.class, () -> controller.createMovie(new Movie()));
     }
 
     @Test
     void testUpdateMovie() throws Exception {
         // given
-        var movie = new Movie(5L, "title1", 2024, "director1", "genre1", "synopsis1");
+        when(service.updateMovie(100L, new Movie())).thenThrow(new MovieException("Exception"));
         when(service.updateMovie(5L, movie)).thenReturn(movie);
+        var result = controller.updateMovie(5L, movie);
 
         // test OK
-        var result = controller.updateMovie(5L, movie);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(Movie.class, result.getBody().getClass());
+        assertNotNull(result.getContent());
+        assertEquals(Movie.class, result.getContent().getClass());
 
-        // Test Catch
-        when(service.updateMovie(anyLong(), any())).thenThrow(new RuntimeException("Exception"));
-        result = controller.updateMovie(5L, movie);
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        // test Error
+        assertThrows(MovieException.class, () -> controller.updateMovie(100L, new Movie()));
     }
 
     @Test
     void testDeleteMovie() {
-        // given
+        // when
         when(service.deleteMovie(anyLong())).thenReturn(false);
         when(service.deleteMovie(5L)).thenReturn(true);
-        when(service.deleteMovie(null)).thenThrow(new RuntimeException("Exception"));
 
         // test OK
         var result = controller.deleteMovie(5L);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-
+        
         // test Fail
-        result = controller.deleteMovie(100L);
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-
-        // Test Catch
-        result = controller.deleteMovie(null);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertThrows(MovieException.class, () -> controller.deleteMovie(100L));
     }
-
 
 }

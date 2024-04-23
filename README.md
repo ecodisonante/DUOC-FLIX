@@ -2,14 +2,13 @@
 
 Este proyecto es parte de la asignatura **DESARROLLO FULLSTACK I_002A**
 
-## Versión Actual - 2.1
-Corresponde a la entrega de la EXP2, Semana 5
+## Versión Actual - 2.2
+Corresponde a la entrega de la EXP3, Semana 7
 
 ## Cambios
-- Se agrega CRUD en MovieService
-- Se agrega CRUD en MovieController
-- Capturar excepciones cuando el objeto Movie no es ingresado correctamente en metodos POST y PUT
-
+- Se agrega documentacion HATEOAS a MovieController
+- Se agregan pruebas unitarias a Service/Repository/Controller de Movie
+- Refactorizacion y limpieza de clases innecesarias
 
 ## Rutas Disponibles
 
