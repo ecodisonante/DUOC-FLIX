@@ -108,12 +108,14 @@ class MovieControllerTest {
 
     @Test
     void testDeleteMovie() {
-        // given
+        // when
         when(service.deleteMovie(anyLong())).thenReturn(false);
         when(service.deleteMovie(5L)).thenReturn(true);
+
         // test OK
         var result = controller.deleteMovie(5L);
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        
         // test Fail
         assertThrows(MovieException.class, () -> controller.deleteMovie(100L));
     }

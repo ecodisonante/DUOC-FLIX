@@ -32,6 +32,8 @@ public class MovieController {
     @Autowired
     IMovieService service;
 
+    static final String ALL_MOVIES = "all-movies";
+
     @GetMapping
     public CollectionModel<EntityModel<MovieDto>> getMovieList() {
         List<Movie> movies = service.getAllMovies();
@@ -56,7 +58,7 @@ public class MovieController {
             return EntityModel.of(movie.get(),
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovie(id)).withSelfRel(),
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovieList())
-                            .withRel("all-movies"));
+                            .withRel(ALL_MOVIES));
 
         else
             throw new MovieException("No existe la pelicula con el id " + id);
@@ -70,7 +72,7 @@ public class MovieController {
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass())
                             .getMovie(newMovie.getId())).withSelfRel(),
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass())
-                            .getMovieList()).withRel("all-movies"));
+                            .getMovieList()).withRel(ALL_MOVIES));
         } catch (Exception e) {
             throw new MovieException("Error al crear pelicula: " + e.getMessage());
         }
@@ -83,7 +85,7 @@ public class MovieController {
             return EntityModel.of(updatedMovie,
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovie(id)).withSelfRel(),
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getMovieList())
-                            .withRel("all-movies"));
+                            .withRel(ALL_MOVIES));
         } catch (Exception e) {
             throw new MovieException("Error al actualizar pelicula: " + e.getMessage());
         }
